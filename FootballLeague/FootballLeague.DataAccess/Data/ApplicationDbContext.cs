@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Repository.Data
+namespace FootballLeague.DataAccess.Data
 {
     public class ApplicationDbContext:DbContext
     {
