@@ -8,4 +8,8 @@
     <Folder Include="Contracts\Impl\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FootballLeague.DataAccess\FootballLeague.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>
