@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballLeague", "FootballLeague\FootballLeague.csproj", "{49B2983B-BEC3-46CA-9A28-84E69DD179A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballLeague.DataAccess", "Repository\FootballLeague.DataAccess.csproj", "{9FC2B0D1-6A9C-41D9-A446-DDFB5E50C20C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballLeague.DataAccess", "FootballLeague.DataAccess\FootballLeague.DataAccess.csproj", "{9FC2B0D1-6A9C-41D9-A446-DDFB5E50C20C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballLeague.Core", "Services\FootballLeague.Core.csproj", "{E739EEEF-5CE3-4753-918F-7AA68CAB0E46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballLeague.Core", "FootballLeague.Core\FootballLeague.Core.csproj", "{E739EEEF-5CE3-4753-918F-7AA68CAB0E46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
