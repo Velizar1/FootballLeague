@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FootballLeague.DataAccess.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,5 +13,21 @@ namespace FootballLeague.DataAccess.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Match<Guid>>()
+                .HasOne(x => x.HostingTeam)
+                .WithMany(x => x.HostedMatches)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Match<Guid>>()
+                .HasOne(x => x.VisitingTeam)
+                .WithMany(x => x.VisitedMatches)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
+        public DbSet<Match<Guid>> Matches { get; set; }
+        public DbSet<Team<Guid>> Teams { get; set; }
     }
 }

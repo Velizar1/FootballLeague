@@ -1,3 +1,5 @@
+using FootballLeague.Core.Repositories;
+using FootballLeague.Core.Repositories.Impl;
 using FootballLeague.DataAccess.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,7 +19,7 @@ namespace FootballLeague
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public  Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -30,9 +32,9 @@ namespace FootballLeague
             services.AddDbContext<ApplicationDbContext>(options =>options
             .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IRepository, Repository>();
             services.AddControllers();
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

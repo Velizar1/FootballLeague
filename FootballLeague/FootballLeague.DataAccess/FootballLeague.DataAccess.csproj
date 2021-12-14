@@ -17,9 +17,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\Models\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>
