@@ -47,7 +47,7 @@ namespace FootballLeague.Core.Contracts.Impl
 
                 await repo.SavechangesAsync();
 
-                await CalculateNewScore<T>(matchModel.VisitingTeamId, matchModel.HostingTeamId);
+                //await CalculateNewScore<T>(matchModel.VisitingTeamId, matchModel.HostingTeamId);
 
                 result.IsSuccess = ResultConstants.Success;
                 result.Message = ResultConstants.CreateSucceeded;
