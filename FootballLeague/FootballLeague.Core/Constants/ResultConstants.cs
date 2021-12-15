@@ -18,5 +18,7 @@ namespace FootballLeague.Core.Constants
         public const string CreateFailed = "Couldnt save entity";
         public const string DeleteFailed = "Couldnt remove entity";
         public const string UpdateFailed = "Couldnt update entity";
+
+        public const string Exist = "Entity already exists";
     }
 }

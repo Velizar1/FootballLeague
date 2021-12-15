@@ -15,7 +15,7 @@ namespace FootballLeague.Core.Models
 
         public long? TeamScore { get; set; }
 
-        public List<MatchModel<T>> HostedMatches { get; set; }
-        public List<MatchModel<T>> VisitedMatches { get; set; }
+        public List<MatchModel<T>> HostedMatches { get; set; } = new List<MatchModel<T>>();
+        public List<MatchModel<T>> VisitedMatches { get; set; } = new List<MatchModel<T>>();
     }
 }

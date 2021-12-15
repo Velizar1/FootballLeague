@@ -57,7 +57,7 @@ namespace FootballLeague.Core.Repositories.Impl
         {
             try
             {
-                await context.Set<T>().AddAsync(data);
+                await context.Set<T>().AddAsync(data); 
                 return new RepositoryResult(ResultConstants.Success,ResultConstants.CreateSucceeded);
             }
             catch(Exception ex)

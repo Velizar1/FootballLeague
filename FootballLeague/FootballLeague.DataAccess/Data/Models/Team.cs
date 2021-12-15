@@ -18,7 +18,13 @@ namespace FootballLeague.DataAccess.Data.Models
         
         public long? TeamScore { get; set; }
 
-        public List<Match<T>> HostedMatches { get; set; }
-        public List<Match<T>> VisitedMatches { get; set; }
+        public ICollection<Match<T>> HostedMatches { get; set; }
+        public ICollection<Match<T>> VisitedMatches { get; set; }
+
+        public Team()
+        {
+            HostedMatches = new List<Match<T>>();
+            VisitedMatches = new List<Match<T>>();
+        }
     }
 }
