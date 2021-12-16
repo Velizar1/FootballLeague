@@ -119,12 +119,12 @@ namespace FootballLeague.Core.Contracts.Impl
             }
         }
 
-        public List<TeamModelEdit<T>> AllTeams<T>()
+        public List<TeamModel<T>> AllTeams<T>()
         {
             return repo.AllReadOnly<Team<T>>()
                 .Include(x => x.VisitedMatches)
                 .Include(x => x.HostedMatches)
-                .Select(x => new TeamModelEdit<T>
+                .Select(x => new TeamModel<T>
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -155,12 +155,12 @@ namespace FootballLeague.Core.Contracts.Impl
 
         }
 
-        public async Task<TeamModelEdit<T>> GetTeamByIdAsync<T>(T Id)
+        public async Task<TeamModel<T>> GetTeamByIdAsync<T>(T Id)
         {
             var team = await repo.AllReadOnly<Team<T>>(x => x.Id.Equals(Id))
                 .Include(x => x.HostedMatches)
                 .Include(x => x.VisitedMatches)
-               .Select(x => new TeamModelEdit<T>()
+               .Select(x => new TeamModel<T>()
                {
                    Id = x.Id,
                    Name = x.Name,
@@ -250,5 +250,7 @@ namespace FootballLeague.Core.Contracts.Impl
                 throw;
             }
         }
+
+       
     }
 }

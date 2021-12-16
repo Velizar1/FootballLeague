@@ -24,7 +24,7 @@ namespace FootballLeague.Controllers
         }
 
         [HttpGet()]
-        public ActionResult<List<TeamModelEdit<Guid>>> GetAll()
+        public ActionResult<List<TeamModel<Guid>>> GetAll()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace FootballLeague.Controllers
             }
         }
         [HttpGet("{Id}")]
-        public async  Task<ActionResult<TeamModelEdit<Guid>>> GetTeamById(Guid Id)
+        public async  Task<ActionResult<TeamModel<Guid>>> GetTeamById(Guid Id)
         {
             try
             {

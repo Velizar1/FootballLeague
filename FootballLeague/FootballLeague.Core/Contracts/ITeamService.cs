@@ -11,7 +11,7 @@ namespace FootballLeague.Core.Contracts
 {
     public interface ITeamService
     {
-        public Task<TeamModelEdit<T>> GetTeamByIdAsync<T>(T Id);
+        public Task<TeamModel<T>> GetTeamByIdAsync<T>(T Id);
 
         public Task<RepositoryResult> AddTeamAsync<T>(TeamModelAdd<T> matchModel);
 
@@ -21,7 +21,7 @@ namespace FootballLeague.Core.Contracts
 
         public Task<RepositoryResult> UdpateTeamAsync<T>(TeamModelEdit<T> matchModel);
 
-        public List<TeamModelEdit<T>> AllTeams<T>();
+        public List<TeamModel<T>> AllTeams<T>();
 
        
     }
