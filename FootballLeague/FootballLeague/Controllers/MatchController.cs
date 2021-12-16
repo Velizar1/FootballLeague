@@ -58,10 +58,7 @@ namespace FootballLeague.Controllers
             
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return NotFound(ResultConstants.NotFound);
-                }
+                
                 var result = await matchService.AddMatchAsync(match);
                 if (result.IsSuccess)
                 {
@@ -80,6 +77,7 @@ namespace FootballLeague.Controllers
         {
             try
             {
+
                 if (Id != match.Id)
                 {
                     return BadRequest();
