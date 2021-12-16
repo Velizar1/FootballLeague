@@ -47,7 +47,7 @@ namespace FootballLeague.Core.Contracts.Impl
 
                 await repo.SavechangesAsync();
 
-                //await CalculateNewScore<T>(matchModel.VisitingTeamId, matchModel.HostingTeamId);
+                await CalculateScore<T>(null, matchModel.VisitingTeamId, matchModel.HostingTeamId);
 
                 result.IsSuccess = ResultConstants.Success;
                 result.Message = ResultConstants.CreateSucceeded;
@@ -55,8 +55,8 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-                return result;
-                throw new Exception(result.Message);
+
+                throw;
             }
         }
 
@@ -115,7 +115,7 @@ namespace FootballLeague.Core.Contracts.Impl
             {
                 var data = await repo.All<Match<T>>(x => x.Id.Equals(id))
                    .FirstOrDefaultAsync();
-                await UpdateScore<T>(data, data.HostingTeamScore, data.VisitingTeamScore);
+                await CalculateScore<T>(data, data.HostingTeamId, data.VisitingTeamId, true);
                 if (data != null)
                 {
                     result = repo.Delete<Match<T>>(data);
@@ -127,7 +127,6 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-                return new RepositoryResult(false, ResultConstants.DeleteFailed);
                 throw;
             }
         }
@@ -141,24 +140,24 @@ namespace FootballLeague.Core.Contracts.Impl
                    .FirstOrDefaultAsync();
                 if (match != null)
                 {
-                    await UpdateScore<T>(match, matchModel.VisitingTeamScore, matchModel.HostingTeamScore);
+                    await CalculateScore<T>(match, matchModel.VisitingTeamId, matchModel.HostingTeamId, true);
                     match.VisitingTeamId = matchModel.VisitingTeamId;
                     match.VisitingTeamScore = matchModel.VisitingTeamScore;
                     match.HostingTeamId = matchModel.HostingTeamId;
                     match.HostingTeamScore = matchModel.HostingTeamScore;
                     result = repo.Update<Match<T>>(match);
                     await repo.SavechangesAsync();
+                    await CalculateScore<T>(match, matchModel.VisitingTeamId, matchModel.HostingTeamId);
                 }
                 return result;
             }
             catch (Exception)
             {
-                return new RepositoryResult(false, ResultConstants.UpdateFailed);
                 throw;
             }
         }
-        //TODO
-        private async Task CalculateNewScore<T>(Match<T> match, T VisitingTeamId, T HostingTeamId,bool isRemoved=false)
+
+        private async Task CalculateScore<T>(Match<T> match, T VisitingTeamId, T HostingTeamId, bool revertScore = false)
         {
             if (match == null)
             {
@@ -173,108 +172,37 @@ namespace FootballLeague.Core.Contracts.Impl
             if (match != null)
             {
                 var teamModel = new TeamModel<T>();
-
-                if (match.HostingTeamScore > match.VisitingTeamScore)
+                try
                 {
-                    teamModel = await teamService.GetTeamByIdAsync<T>(HostingTeamId);
-                    teamModel.TeamScore = (teamModel.TeamScore ?? 0) + 3;
-                }
-                else if (match.HostingTeamScore < match.VisitingTeamScore)
-                {
-                    teamModel = await teamService.GetTeamByIdAsync<T>(VisitingTeamId);
-                    teamModel.TeamScore = (teamModel.TeamScore ?? 0) + 3;
-                }
-                else
-                {
-                    teamModel = await teamService.GetTeamByIdAsync<T>(VisitingTeamId);
-                    teamModel.TeamScore = (teamModel.TeamScore ?? 0) + 1;
-                    await teamService.UdpateTeamAsync<T>(teamModel);
-                    teamModel = await teamService.GetTeamByIdAsync<T>(HostingTeamId);
-                    teamModel.TeamScore = (teamModel.TeamScore ?? 0) + 1;
-
-                }
-                await teamService.UdpateTeamAsync<T>(teamModel);
-            }
-
-        }
-        //TODO
-        private async Task Recalculate<T>(Match<T> match, T VisitingTeamId , T HostedTeamId )
-        {
-            if (match != null)
-            {
-                var team = new TeamModel<T>();
-                if (VisitingTeamId == null)
-                {
-                    team = await teamService.GetTeamByIdAsync<T>(VisitingTeamId);
-                    if (match.VisitingTeamScore > match.HostingTeamScore)
+                    if (match.HostingTeamScore > match.VisitingTeamScore)
                     {
+                        teamModel = await teamService.GetTeamByIdAsync<T>(match.HostingTeamId);
+                        teamModel.TeamScore = (teamModel.TeamScore ?? 0) + (revertScore ? -3 : 3);
+                    }
+                    else if (match.HostingTeamScore < match.VisitingTeamScore)
+                    {
+                        teamModel = await teamService.GetTeamByIdAsync<T>(match.VisitingTeamId);
+                        teamModel.TeamScore = (teamModel.TeamScore ?? 0) + (revertScore ? -3 : 3);
+                    }
+                    else
+                    {
+                        teamModel = await teamService.GetTeamByIdAsync<T>(match.VisitingTeamId);
+                        teamModel.TeamScore = (teamModel.TeamScore ?? 0) + (revertScore ? -1 : 1);
+                        await teamService.UdpateTeamAsync<T>(teamModel);
+                        teamModel = await teamService.GetTeamByIdAsync<T>(match.HostingTeamId);
+                        teamModel.TeamScore = (teamModel.TeamScore ?? 0) + (revertScore ? -1 : 1);
 
                     }
+                    await teamService.UdpateTeamAsync<T>(teamModel);
+                    await repo.SavechangesAsync();
                 }
-                if (HostedTeamId == null)
+                catch (Exception)
                 {
-                    team = await teamService.GetTeamByIdAsync<T>(HostedTeamId);
+                    throw;
                 }
-
-                
-            }
-        }
-        private async Task UpdateScore<T>(Match<T> match, int newScoreVisitingTeam, int newScoreHostedTeam)
-        {
-
-
-            if (match != null)
-            {
-                var newDifference = newScoreVisitingTeam - newScoreHostedTeam;
-                var oldFifference = match.VisitingTeamScore - match.HostingTeamScore;
-
-                var teamModelHosted = await teamService.GetTeamByIdAsync<T>(match.HostingTeamId);
-                var teamModelVisited = await teamService.GetTeamByIdAsync<T>(match.VisitingTeamId);
-                if (newDifference < 0 && oldFifference > 0)
-                {
-                    teamModelHosted.TeamScore = teamModelHosted.TeamScore + 3;
-                    teamModelVisited.TeamScore = teamModelVisited.TeamScore - 3;
-                }
-                else if (newDifference > 0 && oldFifference < 0)
-                {
-
-                    teamModelHosted.TeamScore = teamModelHosted.TeamScore - 3;
-                    teamModelVisited.TeamScore = teamModelVisited.TeamScore + 3;
-
-                }
-                else if (newDifference == 0 && oldFifference > 0)
-                {
-
-                    teamModelHosted.TeamScore = teamModelHosted.TeamScore + 1;
-                    teamModelVisited.TeamScore = teamModelVisited.TeamScore - 2;
-
-                }
-                else if (newDifference == 0 && oldFifference < 0)
-                {
-
-                    teamModelHosted.TeamScore = teamModelHosted.TeamScore - 2;
-                    teamModelVisited.TeamScore = teamModelVisited.TeamScore + 1;
-
-                }
-                else if (newDifference > 0 && oldFifference == 0)
-                {
-
-                    teamModelHosted.TeamScore = teamModelHosted.TeamScore - 1;
-                    teamModelVisited.TeamScore = teamModelVisited.TeamScore + 2;
-
-                }
-                else if (newDifference < 0 && oldFifference == 0)
-                {
-
-                    teamModelHosted.TeamScore = teamModelHosted.TeamScore + 2;
-                    teamModelVisited.TeamScore = teamModelVisited.TeamScore - 1;
-
-                }
-                await teamService.UdpateTeamAsync<T>(teamModelHosted);
-                await teamService.UdpateTeamAsync<T>(teamModelVisited);
-                await repo.SavechangesAsync();
             }
 
         }
+
     }
 }

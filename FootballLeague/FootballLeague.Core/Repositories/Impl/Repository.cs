@@ -47,10 +47,9 @@ namespace FootballLeague.Core.Repositories.Impl
                 context.Set<T>().Add(data);
                 return new RepositoryResult(ResultConstants.Success, ResultConstants.CreateSucceeded);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new RepositoryResult(ResultConstants.Fail, ex.Message);
-                throw;
+                throw new Exception(ResultConstants.CreateFailed);
             }
         }
         public async Task<RepositoryResult> CreateAsync<T>(T data) where T : class
@@ -60,10 +59,10 @@ namespace FootballLeague.Core.Repositories.Impl
                 await context.Set<T>().AddAsync(data); 
                 return new RepositoryResult(ResultConstants.Success,ResultConstants.CreateSucceeded);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                return new RepositoryResult(ResultConstants.Fail,ex.Message);
-                throw;
+               
+                throw new Exception(ResultConstants.CreateFailed);
             }
         }
 
@@ -74,10 +73,9 @@ namespace FootballLeague.Core.Repositories.Impl
                 context.Set<T>().Remove(data);
                 return new RepositoryResult(ResultConstants.Success, ResultConstants.DeleteSucceeded);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new RepositoryResult(ResultConstants.Fail, ex.Message);
-                throw;
+                throw new Exception(ResultConstants.DeleteFailed);
             }
         }
 
@@ -88,20 +86,33 @@ namespace FootballLeague.Core.Repositories.Impl
                 context.Set<T>().Update(data);
                 return new RepositoryResult(ResultConstants.Success, ResultConstants.UpdateSucceeded);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new RepositoryResult(ResultConstants.Fail, ex.Message);
-                throw;
+                throw new Exception(ResultConstants.UpdateFailed);
             }
         }
         public int Savechanges()
         {
-            return context.SaveChanges();
+            try
+            {
+                return context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw new Exception(ResultConstants.SaveFailed);
+            }
         }
 
         public async Task<int> SavechangesAsync()
         {
-            return await context.SaveChangesAsync();
+            try
+            {
+                return await context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception(ResultConstants.SaveFailed);
+            }
         }
 
     }

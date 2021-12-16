@@ -40,19 +40,19 @@ namespace FootballLeague.Core.Contracts.Impl
                 {
                     Name = teamModel.Name,
                     TeamScore = teamModel.TeamScore,
-
                 });
 
                 await repo.SavechangesAsync();
 
                 result.IsSuccess = ResultConstants.Success;
                 result.Message = ResultConstants.CreateSucceeded;
+                
                 return result;
+                
             }
             catch (Exception)
             {
-                return result;
-                throw new Exception(result.Message);
+                throw;
             }
         }
         public async Task<RepositoryResult> AddHostedMatchAsync<T>(T TeamId, MatchModel<T> matchModel)
@@ -81,7 +81,6 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-                return new RepositoryResult(false, ResultConstants.UpdateFailed);
                 throw;
             }
         }
@@ -112,8 +111,8 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-                return new RepositoryResult(false, ResultConstants.UpdateFailed);
                 throw;
+
             }
         }
 
@@ -150,6 +149,7 @@ namespace FootballLeague.Core.Contracts.Impl
 
                 })
                 .ToList();
+           
         }
 
         public async Task<TeamModel<T>> GetTeamByIdAsync<T>(T Id)
@@ -204,8 +204,8 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-                return new RepositoryResult(false, ResultConstants.DeleteFailed);
                 throw;
+
             }
         }
 
@@ -228,7 +228,6 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-                return new RepositoryResult(false, ResultConstants.UpdateFailed);
                 throw;
             }
         }

@@ -1,4 +1,6 @@
-﻿using FootballLeague.Core.Contracts;
+﻿using FootballLeague.Core.Commons;
+using FootballLeague.Core.Constants;
+using FootballLeague.Core.Contracts;
 using FootballLeague.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,7 +34,7 @@ namespace FootballLeague.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
         [HttpGet("{Id}")]
@@ -46,24 +48,25 @@ namespace FootballLeague.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
         [HttpPost]
         public async Task<ActionResult> Post(TeamModel<Guid> team)
         {
+            var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
             {
-                var result = await teamService.AddTeamAsync(team);
+                 result = await teamService.AddTeamAsync(team);
                 if (result.IsSuccess)
                 {
                     return Ok(result);
                 }
                 return NotFound(result.Message);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
 
@@ -83,9 +86,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
         [HttpDelete("{Id}")]
@@ -100,9 +103,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
     }

@@ -34,7 +34,7 @@ namespace FootballLeague.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
         [HttpGet("{Id}")]
@@ -48,7 +48,7 @@ namespace FootballLeague.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
         [HttpPost]
@@ -63,9 +63,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
 
@@ -85,9 +85,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
         [HttpDelete("{Id}")]
@@ -102,9 +102,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
     }
