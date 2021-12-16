@@ -17,7 +17,6 @@ namespace FootballLeague.DataAccess.Data.Models
         public T HostingTeamId;
         public T VisitingTeamId { get; set; }
 
-        
         public int HostingTeamScore { get; set; }
         public int VisitingTeamScore { get; set; }
 

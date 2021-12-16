@@ -24,7 +24,7 @@ namespace FootballLeague.Controllers
         }
 
         [HttpGet()]
-        public ActionResult<List<MatchModel<Guid>>> GetAll()
+        public ActionResult<List<MatchModelEdit<Guid>>> GetAll()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace FootballLeague.Controllers
             }
         }
         [HttpGet("{Id}")]
-        public async Task<ActionResult<MatchModel<Guid>>> GetTeamById(Guid Id)
+        public async Task<ActionResult<MatchModelEdit<Guid>>> GetTeamById(Guid Id)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace FootballLeague.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult> Post(MatchModel<Guid> match)
+        public async Task<ActionResult> Post(MatchModelAdd<Guid> match)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace FootballLeague.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, MatchModel<Guid> match)
+        public async Task<ActionResult> Put(Guid Id, MatchModelEdit<Guid> match)
         {
             try
             {

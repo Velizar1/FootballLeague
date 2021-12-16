@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.Core.Models
 {
-    public class MatchModel<T>
+    public class MatchModelEdit<T>
     {
         public T Id { get; set; }
         public T HostingTeamId { get; set; }

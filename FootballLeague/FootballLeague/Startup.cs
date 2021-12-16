@@ -37,6 +37,7 @@ namespace FootballLeague
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<ITeamService, TeamService>();
             services.AddScoped<IMatchService, MatchService>();
+            services.AddScoped<IScoreService, ScoreService>();
             services.AddControllers();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

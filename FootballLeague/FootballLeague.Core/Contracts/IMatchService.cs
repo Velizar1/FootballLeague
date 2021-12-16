@@ -10,15 +10,15 @@ namespace FootballLeague.Core.Contracts
 {
     public interface IMatchService
     {
-        public Task<RepositoryResult> AddMatchAsync<T>(MatchModel<T> matchModel);
+        public Task<RepositoryResult> AddMatchAsync<T>(MatchModelAdd<T> matchModel);
 
         public Task<RepositoryResult> RemoveMatchAsync<T>(T id);
 
-        public Task<RepositoryResult> UdpateMatchAsync<T>(MatchModel<T> matchModel);
+        public Task<RepositoryResult> UdpateMatchAsync<T>(MatchModelEdit<T> matchModel);
 
-        public List<MatchModel<T>> AllMatches<T>();
+        public List<MatchModelEdit<T>> AllMatches<T>();
 
-        public Task<MatchModel<T>> GetMatchByIdAsync<T>(T id);
-        public Task<MatchModel<T>> GetMatchByTeamsAsync<T>(T visitngTeamId, T hostingTeamId);
+        public Task<MatchModelEdit<T>> GetMatchByIdAsync<T>(T id);
+        public Task<MatchModelEdit<T>> GetMatchByTeamsAsync<T>(T visitngTeamId, T hostingTeamId);
     }
 }

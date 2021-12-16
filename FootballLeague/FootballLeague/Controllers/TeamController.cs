@@ -24,7 +24,7 @@ namespace FootballLeague.Controllers
         }
 
         [HttpGet()]
-        public ActionResult<List<TeamModel<Guid>>> GetAll()
+        public ActionResult<List<TeamModelEdit<Guid>>> GetAll()
         {
             try
             {
@@ -38,12 +38,12 @@ namespace FootballLeague.Controllers
             }
         }
         [HttpGet("{Id}")]
-        public async  Task<ActionResult<TeamModel<Guid>>> GetTeamById(Guid Id)
+        public async  Task<ActionResult<TeamModelEdit<Guid>>> GetTeamById(Guid Id)
         {
             try
             {
                 var result = await teamService.GetTeamByIdAsync(Id);
-
+                
                 return Ok(result);
             }
             catch (Exception ex)
@@ -52,7 +52,7 @@ namespace FootballLeague.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult> Post(TeamModel<Guid> team)
+        public async Task<ActionResult> Post(TeamModelAdd<Guid> team)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
@@ -71,7 +71,7 @@ namespace FootballLeague.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, TeamModel<Guid> team)
+        public async Task<ActionResult> Put(Guid Id, TeamModelEdit<Guid> team)
         {
             try
             {

@@ -16,7 +16,7 @@ namespace FootballLeague.Core.Constants
         public const string UpdateSucceeded = "Successfully updated entity";
 
         public const string SaveFailed = "Save failed";
-
+        public const string NotFound = "Entity not found";
         public const string CreateFailed = "Couldnt save entity";
         public const string DeleteFailed = "Couldnt remove entity";
         public const string UpdateFailed = "Couldnt update entity";
