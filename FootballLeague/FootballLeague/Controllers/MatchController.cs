@@ -55,8 +55,13 @@ namespace FootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(MatchModelAdd<Guid> match)
         {
+            
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return NotFound(ResultConstants.NotFound);
+                }
                 var result = await matchService.AddMatchAsync(match);
                 if (result.IsSuccess)
                 {
@@ -64,7 +69,7 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return NotFound(ResultConstants.NotFound);
             }

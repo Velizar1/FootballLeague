@@ -55,7 +55,6 @@ namespace FootballLeague.Core.Contracts.Impl
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
