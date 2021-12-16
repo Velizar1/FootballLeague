@@ -18,7 +18,7 @@ namespace FootballLeague.Core.Contracts.Impl
         private readonly IMatchService matchService;
 
 
-        public TeamService(IRepository _repo,IMatchService _matchService)
+        public TeamService(IRepository _repo, IMatchService _matchService)
         {
             this.repo = _repo;
             this.matchService = _matchService;
@@ -40,8 +40,8 @@ namespace FootballLeague.Core.Contracts.Impl
                 }
                 result = await repo.CreateAsync<Team<T>>(new Team<T>()
                 {
-                    
-                    Name = teamModel.Name,
+
+                    Name = teamModel.Name ?? String.Empty,
                     TeamScore = teamModel.TeamScore,
                 });
 
@@ -200,7 +200,7 @@ namespace FootballLeague.Core.Contracts.Impl
             var result = new RepositoryResult(false, ResultConstants.DeleteFailed);
             try
             {
-                
+
                 var team = await repo.All<Team<T>>(x => x.Id.Equals(id))
                    .FirstOrDefaultAsync();
                 if (team != null)
@@ -237,7 +237,7 @@ namespace FootballLeague.Core.Contracts.Impl
                    .FirstOrDefaultAsync();
                 if (team != null)
                 {
-                    team.Name = teamModel.Name;
+                    team.Name = teamModel.Name ?? String.Empty;
                     team.TeamScore = teamModel.TeamScore;
 
                     result = repo.Update<Team<T>>(team);
