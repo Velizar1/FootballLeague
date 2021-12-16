@@ -1,4 +1,5 @@
-﻿using FootballLeague.Core.Contracts;
+﻿using FootballLeague.Core.Constants;
+using FootballLeague.Core.Contracts;
 using FootballLeague.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,9 +33,9 @@ namespace FootballLeague.Controllers
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return NotFound(ex.Message);
+                return NotFound(ResultConstants.NotFound);
             }
         }
         [HttpGet("{Id}")]
@@ -46,9 +47,9 @@ namespace FootballLeague.Controllers
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return NotFound(ex.Message);
+                return NotFound(ResultConstants.NotFound);
             }
         }
         [HttpPost]
@@ -63,9 +64,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return NotFound(ex.Message);
+                return NotFound(ResultConstants.NotFound);
             }
         }
 
@@ -85,9 +86,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return NotFound(ex.Message);
+                return NotFound(ResultConstants.NotFound);
             }
         }
         [HttpDelete("{Id}")]
@@ -102,9 +103,9 @@ namespace FootballLeague.Controllers
                 }
                 return NotFound(result.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return NotFound(ex.Message);
+                return NotFound(ResultConstants.NotFound);
             }
         }
     }
