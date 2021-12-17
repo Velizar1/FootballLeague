@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.Core.Models
 {
-    public class MatchModelEdit<T>
+    public class MatchAddModel
     {
-        public T Id { get; set; }
-        public T HostingTeamId { get; set; }
-        public T VisitingTeamId { get; set; }
+       
+        public Guid HostingTeamId { get; set; }
+        public Guid VisitingTeamId { get; set; }
         public int HostingTeamScore { get; set; }
         public int VisitingTeamScore { get; set; }
         public bool IsPlayed { get; set; }

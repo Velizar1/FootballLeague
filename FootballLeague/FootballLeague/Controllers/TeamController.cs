@@ -22,13 +22,16 @@ namespace FootballLeague.Controllers
             this.teamService = _teamService;
             this.matchService = _matchService;
         }
-
+        /// <summary>
+        /// Return list of all team records
+        /// </summary>
+        /// <returns></returns>
         [HttpGet()]
-        public ActionResult<List<TeamModel<Guid>>> GetAll()
+        public ActionResult GetAll()
         {
             try
             {
-                var result = teamService.AllTeams<Guid>();
+                var result = teamService.AllTeams();
 
                 return Ok(result);
             }
@@ -37,8 +40,13 @@ namespace FootballLeague.Controllers
                 return NotFound(ex.Message);
             }
         }
+        /// <summary>
+        /// Get a team by given Id
+        /// </summary>
+        /// <param name="Id">Identificator of the team</param>
+        /// <returns></returns>
         [HttpGet("{Id}")]
-        public async  Task<ActionResult<TeamModel<Guid>>> GetTeamById(Guid Id)
+        public async  Task<ActionResult> GetTeamById(Guid Id)
         {
             try
             {
@@ -51,8 +59,13 @@ namespace FootballLeague.Controllers
                 return NotFound(ex.Message);
             }
         }
+        /// <summary>
+        /// Add a new record 
+        /// </summary>
+        /// <param name="team">model of the entity</param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Post(TeamModelAdd<Guid> team)
+        public async Task<ActionResult> Post(TeamAddModel team)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
@@ -69,9 +82,14 @@ namespace FootballLeague.Controllers
                 return NotFound(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Update an existing record
+        /// </summary>
+        /// <param name="Id">Identificator of a team</param>
+        /// <param name="team">model of the entity</param>
+        /// <returns></returns>
         [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, TeamModelEdit<Guid> team)
+        public async Task<ActionResult> Put(Guid Id, TeamEditModel team)
         {
             try
             {
@@ -91,6 +109,11 @@ namespace FootballLeague.Controllers
                 return NotFound(ex.Message);
             }
         }
+        /// <summary>
+        /// Removes a record
+        /// </summary>
+        /// <param name="Id">Identificator of a team</param>
+        /// <returns></returns>
         [HttpDelete("{Id}")]
         public async Task<ActionResult> Delete(Guid Id)
         {

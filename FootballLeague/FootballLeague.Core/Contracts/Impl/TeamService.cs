@@ -25,12 +25,12 @@ namespace FootballLeague.Core.Contracts.Impl
         }
 
 
-        public async Task<RepositoryResult> AddTeamAsync<T>(TeamModelAdd<T> teamModel)
+        public async Task<RepositoryResult> AddTeamAsync(TeamAddModel teamModel)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
             {
-                var team = await repo.AllReadOnly<Team<T>>()
+                var team = await repo.AllReadOnly<Team>()
                     .Where(x => x.Name.Equals(teamModel.Name))
                     .FirstOrDefaultAsync();
                 if (team != null)
@@ -38,7 +38,7 @@ namespace FootballLeague.Core.Contracts.Impl
                     result.Message = ResultConstants.Exist;
                     return result;
                 }
-                result = await repo.CreateAsync<Team<T>>(new Team<T>()
+                result = await repo.CreateAsync<Team>(new Team()
                 {
 
                     Name = teamModel.Name ?? String.Empty,
@@ -58,78 +58,18 @@ namespace FootballLeague.Core.Contracts.Impl
                 throw;
             }
         }
-        public async Task<RepositoryResult> AddHostedMatchAsync<T>(T TeamId, MatchModelEdit<T> matchModel)
+      
+        public List<TeamModel> AllTeams()
         {
-            var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
-            try
-            {
-                var team = await repo.All<Team<T>>(x => x.Id.Equals(TeamId) && x.Id.Equals(matchModel.HostingTeamId))
-                    .Include(x => x.HostedMatches)
-                   .FirstOrDefaultAsync();
-                if (team != null)
-                {
-                    var match = await repo.AllReadOnly<Match<T>>()
-                                        .Where(x => x.Id.Equals(matchModel.Id) &&
-                                                  x.HostingTeamId.Equals(team.Id))
-                                        .FirstOrDefaultAsync();
-                    if (match != null)
-                    {
-                        team.HostedMatches.Add(match);
-                        result = repo.Update<Team<T>>(team);
-                        await repo.SavechangesAsync();
-                    }
-                }
-
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<RepositoryResult> AddVisitedMatchAsync<T>(T TeamId, MatchModelEdit<T> matchModel)
-        {
-            var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
-            try
-            {
-                var team = await repo.All<Team<T>>(x => x.Id.Equals(TeamId) && x.Id.Equals(matchModel.VisitingTeamId))
-                    .Include(x => x.VisitedMatches)
-                   .FirstOrDefaultAsync();
-                if (team != null)
-                {
-                    var match = await repo.AllReadOnly<Match<T>>()
-                                        .Where(x => x.Id.Equals(matchModel.Id) &&
-                                                  x.VisitingTeamId.Equals(team.Id))
-                                        .FirstOrDefaultAsync();
-                    if (match != null)
-                    {
-                        team.VisitedMatches.Add(match);
-                        result = repo.Update<Team<T>>(team);
-                        await repo.SavechangesAsync();
-                    }
-                }
-
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-
-            }
-        }
-
-        public List<TeamModel<T>> AllTeams<T>()
-        {
-            return repo.AllReadOnly<Team<T>>()
+            return repo.AllReadOnly<Team>()
                 .Include(x => x.VisitedMatches)
                 .Include(x => x.HostedMatches)
-                .Select(x => new TeamModel<T>
+                .Select(x => new TeamModel
                 {
                     Id = x.Id,
                     Name = x.Name,
                     TeamScore = x.TeamScore,
-                    HostedMatches = x.HostedMatches.Select(y => new MatchModelEdit<T>()
+                    HostedMatches = x.HostedMatches.Select(y => new MatchEditModel()
                     {
                         Id = y.Id,
                         HostingTeamId = y.HostingTeamId,
@@ -139,7 +79,7 @@ namespace FootballLeague.Core.Contracts.Impl
                         IsPlayed = y.IsPlayed,
 
                     }).ToList(),
-                    VisitedMatches = x.VisitedMatches.Select(y => new MatchModelEdit<T>()
+                    VisitedMatches = x.VisitedMatches.Select(y => new MatchEditModel()
                     {
                         Id = y.Id,
                         HostingTeamId = y.HostingTeamId,
@@ -155,17 +95,17 @@ namespace FootballLeague.Core.Contracts.Impl
 
         }
 
-        public async Task<TeamModel<T>> GetTeamByIdAsync<T>(T Id)
+        public async Task<TeamModel> GetTeamByIdAsync(Guid Id)
         {
-            var team = await repo.AllReadOnly<Team<T>>(x => x.Id.Equals(Id))
+            var team = await repo.AllReadOnly<Team>(x => x.Id.Equals(Id))
                 .Include(x => x.HostedMatches)
                 .Include(x => x.VisitedMatches)
-               .Select(x => new TeamModel<T>()
+               .Select(x => new TeamModel()
                {
                    Id = x.Id,
                    Name = x.Name,
                    TeamScore = x.TeamScore,
-                   HostedMatches = x.HostedMatches.Select(y => new MatchModelEdit<T>()
+                   HostedMatches = x.HostedMatches.Select(y => new MatchEditModel()
                    {
                        Id = y.Id,
                        HostingTeamId = y.HostingTeamId,
@@ -175,7 +115,7 @@ namespace FootballLeague.Core.Contracts.Impl
                        IsPlayed = y.IsPlayed,
 
                    }).ToList(),
-                   VisitedMatches = x.VisitedMatches.Select(y => new MatchModelEdit<T>()
+                   VisitedMatches = x.VisitedMatches.Select(y => new MatchEditModel()
                    {
                        Id = y.Id,
                        HostingTeamId = y.HostingTeamId,
@@ -195,17 +135,17 @@ namespace FootballLeague.Core.Contracts.Impl
             return team;
         }
 
-        public async Task<RepositoryResult> RemoveTeamAsync<T>(T id)
+        public async Task<RepositoryResult> RemoveTeamAsync(Guid id)
         {
             var result = new RepositoryResult(false, ResultConstants.DeleteFailed);
             try
             {
 
-                var team = await repo.All<Team<T>>(x => x.Id.Equals(id))
+                var team = await repo.All<Team>(x => x.Id.Equals(id))
                    .FirstOrDefaultAsync();
                 if (team != null)
                 {
-                    var matches = repo.All<Match<T>>()
+                    var matches = repo.All<Match>()
                     .Where(x => x.VisitingTeamId.Equals(id) || x.HostingTeamId.Equals(id))
                     .ToList();
 
@@ -214,7 +154,7 @@ namespace FootballLeague.Core.Contracts.Impl
                         await matchService.RemoveMatchAsync(match.Id);
                     }
 
-                    result = repo.Delete<Team<T>>(team);
+                    result = repo.Delete<Team>(team);
                     await repo.SavechangesAsync();
 
                 }
@@ -228,19 +168,19 @@ namespace FootballLeague.Core.Contracts.Impl
             }
         }
 
-        public async Task<RepositoryResult> UdpateTeamAsync<T>(TeamModelEdit<T> teamModel)
+        public async Task<RepositoryResult> UdpateTeamAsync(TeamEditModel teamModel)
         {
             var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
             try
             {
-                var team = await repo.All<Team<T>>(x => x.Id.Equals(teamModel.Id))
+                var team = await repo.All<Team>(x => x.Id.Equals(teamModel.Id))
                    .FirstOrDefaultAsync();
                 if (team != null)
                 {
                     team.Name = teamModel.Name ?? String.Empty;
                     team.TeamScore = teamModel.TeamScore;
 
-                    result = repo.Update<Team<T>>(team);
+                    result = repo.Update<Team>(team);
                     await repo.SavechangesAsync();
                 }
                 return result;

@@ -19,11 +19,11 @@ namespace FootballLeague.Core.Contracts.Impl
         {
             this.repo = _repo;
         }
-        public async Task CalculateScore<T>(Match<T> match, T VisitingTeamId, T HostingTeamId, bool revertScore = false)
+        public async Task CalculateScore(Match match, Guid VisitingTeamId, Guid HostingTeamId, bool revertScore = false)
         {
             if (match == null)
             {
-                match = await repo.All<Match<T>>()
+                match = await repo.All<Match>()
                .Include(x => x.HostingTeam)
                .Include(x => x.VisitingTeam)
                .Where(x => x.VisitingTeamId.Equals(VisitingTeamId) &&
@@ -33,7 +33,7 @@ namespace FootballLeague.Core.Contracts.Impl
 
             if (match != null)
             {
-               Team<T> teamModel;
+               Team teamModel;
                 try
                 {
                     if (match.HostingTeamScore > match.VisitingTeamScore)
@@ -50,13 +50,13 @@ namespace FootballLeague.Core.Contracts.Impl
                     {
                         teamModel = match.VisitingTeam;
                         teamModel.TeamScore = (teamModel.TeamScore ?? 0) + (revertScore ? -1 : 1);
-                        repo.Update<Team<T>>(teamModel);
+                        repo.Update<Team>(teamModel);
                         
                         teamModel = match.HostingTeam;
                         teamModel.TeamScore = (teamModel.TeamScore ?? 0) + (revertScore ? -1 : 1);
 
                     }
-                    repo.Update<Team<T>>(teamModel);
+                    repo.Update<Team>(teamModel);
                     await repo.SavechangesAsync();
                 }
                 catch (Exception)

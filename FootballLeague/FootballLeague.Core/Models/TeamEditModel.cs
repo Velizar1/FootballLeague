@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.Core.Models
 {
-    public class TeamModelEdit<T>
+    public class TeamEditModel
     {
         
-        public T Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 

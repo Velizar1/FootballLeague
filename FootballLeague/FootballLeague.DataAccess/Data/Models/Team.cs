@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.DataAccess.Data.Models
 {
-    public class Team<T> 
+    public class Team
     {
         [Key]
-        public T Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -18,13 +18,13 @@ namespace FootballLeague.DataAccess.Data.Models
         
         public long? TeamScore { get; set; }
 
-        public ICollection<Match<T>> HostedMatches { get; set; }
-        public ICollection<Match<T>> VisitedMatches { get; set; }
+        public ICollection<Match> HostedMatches { get; set; }
+        public ICollection<Match> VisitedMatches { get; set; }
 
         public Team()
         {
-            HostedMatches = new List<Match<T>>();
-            VisitedMatches = new List<Match<T>>();
+            HostedMatches = new List<Match>();
+            VisitedMatches = new List<Match>();
         }
     }
 }

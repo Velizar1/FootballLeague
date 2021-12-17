@@ -11,17 +11,40 @@ namespace FootballLeague.Core.Contracts
 {
     public interface ITeamService
     {
-        public Task<TeamModel<T>> GetTeamByIdAsync<T>(T Id);
-
-        public Task<RepositoryResult> AddTeamAsync<T>(TeamModelAdd<T> matchModel);
-
-        public Task<RepositoryResult> AddHostedMatchAsync<T>(T TeamId, MatchModelEdit<T> matchModel);
-        public Task<RepositoryResult> AddVisitedMatchAsync<T>(T TeamId, MatchModelEdit<T> matchModel);
-        public Task<RepositoryResult> RemoveTeamAsync<T>(T id);
-
-        public Task<RepositoryResult> UdpateTeamAsync<T>(TeamModelEdit<T> matchModel);
-
-        public List<TeamModel<T>> AllTeams<T>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Guid"></typeparam>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public Task<TeamModel> GetTeamByIdAsync(Guid Id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Guid"></typeparam>
+        /// <param name="matchModel"></param>
+        /// <returns></returns>
+        public Task<RepositoryResult> AddTeamAsync(TeamAddModel matchModel);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Guid"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Task<RepositoryResult> RemoveTeamAsync(Guid id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Guid"></typeparam>
+        /// <param name="matchModel"></param>
+        /// <returns></returns>
+        public Task<RepositoryResult> UdpateTeamAsync(TeamEditModel matchModel);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Guid"></typeparam>
+        /// <returns></returns>
+        public List<TeamModel> AllTeams();
 
        
     }

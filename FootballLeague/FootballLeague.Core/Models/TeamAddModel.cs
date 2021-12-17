@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.Core.Models
 {
-    public class TeamModelAdd<T>
+    public class TeamAddModel
     {
         
        

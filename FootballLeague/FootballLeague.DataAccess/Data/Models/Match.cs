@@ -8,24 +8,23 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.DataAccess.Data.Models
 {
-    public class Match<T>
+    public class Match
     {
         [Key]
-        public T Id { get; set; }
+        public Guid Id { get; set; }
         public bool IsPlayed { get; set; }
 
-        public T HostingTeamId;
-        public T VisitingTeamId { get; set; }
+        public Guid HostingTeamId;
+        public Guid VisitingTeamId { get; set; }
 
         public int HostingTeamScore { get; set; }
         public int VisitingTeamScore { get; set; }
 
-        //see if virtual needed
 
         [ForeignKey(nameof(HostingTeamId))]
-        public Team<T> HostingTeam { get; set; }
+        public Team HostingTeam { get; set; }
 
         [ForeignKey(nameof(VisitingTeamId))]
-        public Team<T> VisitingTeam { get; set; }
+        public Team VisitingTeam { get; set; }
     }
 }
