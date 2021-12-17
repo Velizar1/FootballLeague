@@ -42,7 +42,7 @@ namespace FootballLeague.Core.Contracts.Impl
                     VisitingTeamId = matchModel.VisitingTeamId,
                     HostingTeamScore = matchModel.HostingTeamScore,
                     VisitingTeamScore = matchModel.VisitingTeamScore,
-                    IsPlayed = matchModel.IsPlayed,
+                   
                 }) ;
 
                 await repo.SavechangesAsync();
@@ -69,7 +69,7 @@ namespace FootballLeague.Core.Contracts.Impl
                     VisitingTeamId = x.VisitingTeamId,
                     HostingTeamScore = x.HostingTeamScore,
                     VisitingTeamScore = x.VisitingTeamScore,
-                    IsPlayed = x.IsPlayed
+                   
 
                 })
                 .ToList();
@@ -85,7 +85,7 @@ namespace FootballLeague.Core.Contracts.Impl
                      VisitingTeamId = x.VisitingTeamId,
                      VisitingTeamScore = x.VisitingTeamScore,
                      HostingTeamScore = x.HostingTeamScore,
-                     IsPlayed = x.IsPlayed,
+                   
                  })
                  .FirstOrDefaultAsync();
             if (data == null)

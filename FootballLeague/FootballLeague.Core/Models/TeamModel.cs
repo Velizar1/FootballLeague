@@ -12,7 +12,7 @@ namespace FootballLeague.Core.Models
 
         public string Name { get; set; }
 
-        public long? TeamScore { get; set; }
+        public int TeamScore { get; set; }
         public List<MatchEditModel> HostedMatches { get; set; } 
         public List<MatchEditModel> VisitedMatches { get; set; } 
     }

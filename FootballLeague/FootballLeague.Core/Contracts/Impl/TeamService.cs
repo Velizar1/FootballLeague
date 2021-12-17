@@ -38,10 +38,10 @@ namespace FootballLeague.Core.Contracts.Impl
                     result.Message = ResultConstants.Exist;
                     return result;
                 }
-                result = await repo.CreateAsync<Team>(new Team()
+                result = await repo.CreateAsync(new Team()
                 {
 
-                    Name = teamModel.Name ?? String.Empty,
+                    Name = teamModel.Name ?? string.Empty,
                     TeamScore = teamModel.TeamScore,
                 });
 
@@ -76,7 +76,7 @@ namespace FootballLeague.Core.Contracts.Impl
                         HostingTeamScore = y.HostingTeamScore,
                         VisitingTeamScore = y.VisitingTeamScore,
                         VisitingTeamId = y.VisitingTeamId,
-                        IsPlayed = y.IsPlayed,
+                       
 
                     }).ToList(),
                     VisitedMatches = x.VisitedMatches.Select(y => new MatchEditModel()
@@ -86,7 +86,7 @@ namespace FootballLeague.Core.Contracts.Impl
                         HostingTeamScore = y.HostingTeamScore,
                         VisitingTeamScore = y.VisitingTeamScore,
                         VisitingTeamId = y.VisitingTeamId,
-                        IsPlayed = y.IsPlayed,
+                       
 
                     }).ToList()
 
@@ -112,7 +112,7 @@ namespace FootballLeague.Core.Contracts.Impl
                        HostingTeamScore = y.HostingTeamScore,
                        VisitingTeamScore = y.VisitingTeamScore,
                        VisitingTeamId = y.VisitingTeamId,
-                       IsPlayed = y.IsPlayed,
+                      
 
                    }).ToList(),
                    VisitedMatches = x.VisitedMatches.Select(y => new MatchEditModel()
@@ -122,7 +122,7 @@ namespace FootballLeague.Core.Contracts.Impl
                        HostingTeamScore = y.HostingTeamScore,
                        VisitingTeamScore = y.VisitingTeamScore,
                        VisitingTeamId = y.VisitingTeamId,
-                       IsPlayed = y.IsPlayed,
+                      
 
                    }).ToList()
                })

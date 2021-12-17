@@ -12,8 +12,7 @@ namespace FootballLeague.DataAccess.Data.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public bool IsPlayed { get; set; }
-
+      
         public Guid HostingTeamId;
         public Guid VisitingTeamId { get; set; }
 
