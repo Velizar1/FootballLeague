@@ -15,7 +15,7 @@ namespace FootballLeague.DataAccess.Data.Models
         [Required]
         public string Name { get; set; }
         
-        public int TeamScore { get; set; }
+        public int TeamPoints { get; set; }
 
         public ICollection<Match> HostedMatches { get; set; }
         public ICollection<Match> VisitedMatches { get; set; }

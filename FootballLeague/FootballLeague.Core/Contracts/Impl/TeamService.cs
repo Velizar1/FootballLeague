@@ -42,7 +42,7 @@ namespace FootballLeague.Core.Contracts.Impl
                 {
 
                     Name = teamModel.Name ?? string.Empty,
-                    TeamScore = teamModel.TeamPoints,
+                    TeamPoints = teamModel.TeamPoints,
                 });
 
                 await repo.SavechangesAsync();
@@ -68,7 +68,7 @@ namespace FootballLeague.Core.Contracts.Impl
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    TeamPoints = x.TeamScore,
+                    TeamPoints = x.TeamPoints,
                     HostedMatches = x.HostedMatches.Select(y => new MatchModel()
                     {
                         Id = y.Id,
@@ -104,7 +104,7 @@ namespace FootballLeague.Core.Contracts.Impl
                {
                    Id = x.Id,
                    Name = x.Name,
-                   TeamPoints = x.TeamScore,
+                   TeamPoints = x.TeamPoints,
                    HostedMatches = x.HostedMatches.Select(y => new MatchModel()
                    {
                        Id = y.Id,
@@ -178,7 +178,7 @@ namespace FootballLeague.Core.Contracts.Impl
                 if (team != null)
                 {
                     team.Name = teamModel.Name ?? String.Empty;
-                    team.TeamScore = teamModel.TeamPoints;
+                    team.TeamPoints = teamModel.TeamPoints;
 
                     result = repo.Update<Team>(team);
                     await repo.SavechangesAsync();

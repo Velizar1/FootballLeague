@@ -39,21 +39,21 @@ namespace FootballLeague.Core.Contracts.Impl
                     if (match.HostingTeamScore > match.VisitingTeamScore)
                     {
                         teamModel = match.HostingTeam;
-                        teamModel.TeamScore = teamModel.TeamScore + (revertScore ? -3 : 3);
+                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -3 : 3);
                     }
                     else if (match.HostingTeamScore < match.VisitingTeamScore)
                     {
                         teamModel = match.VisitingTeam;
-                        teamModel.TeamScore = teamModel.TeamScore + (revertScore ? -3 : 3);
+                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -3 : 3);
                     }
                     else
                     {
                         teamModel = match.VisitingTeam;
-                        teamModel.TeamScore = teamModel.TeamScore + (revertScore ? -1 : 1);
+                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -1 : 1);
                         repo.Update<Team>(teamModel);
                         
                         teamModel = match.HostingTeam;
-                        teamModel.TeamScore = teamModel.TeamScore + (revertScore ? -1 : 1);
+                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -1 : 1);
 
                     }
                     repo.Update<Team>(teamModel);
