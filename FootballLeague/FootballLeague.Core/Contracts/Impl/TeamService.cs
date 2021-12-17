@@ -17,51 +17,42 @@ namespace FootballLeague.Core.Contracts.Impl
         private readonly IRepository repo;
         private readonly IMatchService matchService;
 
-
         public TeamService(IRepository _repo, IMatchService _matchService)
         {
-            this.repo = _repo;
-            this.matchService = _matchService;
+            repo = _repo;
+            matchService = _matchService;
         }
-
 
         public async Task<RepositoryResult> AddTeamAsync(TeamModel teamModel)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
-            try
+
+            var team = await repo.AllReadOnly<Team>()
+                .Where(x => x.Name.Equals(teamModel.Name))
+                .FirstOrDefaultAsync();
+
+            if (team != null)
             {
-                var team = await repo.AllReadOnly<Team>()
-                    .Where(x => x.Name.Equals(teamModel.Name))
-                    .FirstOrDefaultAsync();
-                if (team != null)
-                {
-                    result.Message = ResultConstants.Exist;
-                    return result;
-                }
-                result = await repo.CreateAsync(new Team()
-                {
-
-                    Name = teamModel.Name ?? string.Empty,
-                    TeamPoints = teamModel.TeamPoints,
-                });
-
-                await repo.SavechangesAsync();
-
-                result.IsSuccess = ResultConstants.Success;
-                result.Message = ResultConstants.CreateSucceeded;
-
+                result.Message = ResultConstants.Exist;
                 return result;
+            }
 
-            }
-            catch (Exception)
+            result = await repo.CreateAsync(new Team()
             {
-                throw;
-            }
+                Name = teamModel.Name ?? string.Empty,
+                TeamPoints = teamModel.TeamPoints,
+            });
+
+            await repo.SavechangesAsync();
+            result.IsSuccess = ResultConstants.Success;
+            result.Message = ResultConstants.CreateSucceeded;
+
+            return result;
         }
-      
+        
         public IEnumerable<TeamModel> AllTeams()
         {
-            return repo.AllReadOnly<Team>()
+            var teams = repo.AllReadOnly<Team>()
                 .Include(x => x.VisitedMatches)
                 .Include(x => x.HostedMatches)
                 .Select(x => new TeamModel
@@ -69,30 +60,15 @@ namespace FootballLeague.Core.Contracts.Impl
                     Id = x.Id,
                     Name = x.Name,
                     TeamPoints = x.TeamPoints,
-                    HostedMatches = x.HostedMatches.Select(y => new MatchModel()
-                    {
-                        Id = y.Id,
-                        HostingTeamId = y.HostingTeamId,
-                        HostingTeamScore = y.HostingTeamScore,
-                        VisitingTeamScore = y.VisitingTeamScore,
-                        VisitingTeamId = y.VisitingTeamId,
-                       
-
-                    }).ToList(),
-                    VisitedMatches = x.VisitedMatches.Select(y => new MatchModel()
-                    {
-                        Id = y.Id,
-                        HostingTeamId = y.HostingTeamId,
-                        HostingTeamScore = y.HostingTeamScore,
-                        VisitingTeamScore = y.VisitingTeamScore,
-                        VisitingTeamId = y.VisitingTeamId,
-                       
-
-                    }).ToList()
-
                 })
                 .ToList();
 
+            if (teams.Count == 0)
+            {
+                throw new InvalidOperationException(ExceptionConstants.Message.EmptySequence);
+            }
+
+            return teams;
         }
 
         public async Task<TeamModel> GetTeamByIdAsync(Guid Id)
@@ -105,32 +81,12 @@ namespace FootballLeague.Core.Contracts.Impl
                    Id = x.Id,
                    Name = x.Name,
                    TeamPoints = x.TeamPoints,
-                   HostedMatches = x.HostedMatches.Select(y => new MatchModel()
-                   {
-                       Id = y.Id,
-                       HostingTeamId = y.HostingTeamId,
-                       HostingTeamScore = y.HostingTeamScore,
-                       VisitingTeamScore = y.VisitingTeamScore,
-                       VisitingTeamId = y.VisitingTeamId,
-                      
-
-                   }).ToList(),
-                   VisitedMatches = x.VisitedMatches.Select(y => new MatchModel()
-                   {
-                       Id = y.Id,
-                       HostingTeamId = y.HostingTeamId,
-                       HostingTeamScore = y.HostingTeamScore,
-                       VisitingTeamScore = y.VisitingTeamScore,
-                       VisitingTeamId = y.VisitingTeamId,
-                      
-
-                   }).ToList()
                })
                .FirstOrDefaultAsync();
 
             if (team == null)
             {
-                throw new Exception(ResultConstants.NotFound);
+                throw new ArgumentException(ExceptionConstants.Message.NotFoundById);
             }
             return team;
         }
@@ -138,59 +94,48 @@ namespace FootballLeague.Core.Contracts.Impl
         public async Task<RepositoryResult> RemoveTeamAsync(Guid id)
         {
             var result = new RepositoryResult(false, ResultConstants.DeleteFailed);
-            try
+
+            var team = await repo.All<Team>(x => x.Id.Equals(id))
+               .FirstOrDefaultAsync();
+
+            if (team == null)
             {
-
-                var team = await repo.All<Team>(x => x.Id.Equals(id))
-                   .FirstOrDefaultAsync();
-                if (team != null)
-                {
-                    var matches = repo.All<Match>()
-                    .Where(x => x.VisitingTeamId.Equals(id) || x.HostingTeamId.Equals(id))
-                    .ToList();
-
-                    foreach (var match in matches)
-                    {
-                        await matchService.RemoveMatchAsync(match.Id);
-                    }
-
-                    result = repo.Delete<Team>(team);
-                    await repo.SavechangesAsync();
-
-                }
-
-                return result;
+                throw new ArgumentException(ExceptionConstants.Message.NotFoundById);
             }
-            catch (Exception)
+
+            var matches = repo.All<Match>()
+               .Where(x => x.VisitingTeamId.Equals(id) || x.HostingTeamId.Equals(id))
+               .ToList();
+
+            foreach (var match in matches)
             {
-                throw;
-
+                await matchService.RemoveMatchAsync(match.Id);
             }
+
+            result = repo.Delete(team);
+            await repo.SavechangesAsync();
+            return result;
+
         }
 
         public async Task<RepositoryResult> UdpateTeamAsync(TeamModel teamModel)
         {
             var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
-            try
-            {
-                var team = await repo.All<Team>(x => x.Id.Equals(teamModel.Id))
-                   .FirstOrDefaultAsync();
-                if (team != null)
-                {
-                    team.Name = teamModel.Name ?? String.Empty;
-                    team.TeamPoints = teamModel.TeamPoints;
 
-                    result = repo.Update<Team>(team);
-                    await repo.SavechangesAsync();
-                }
-                return result;
-            }
-            catch (Exception)
+            var team = await repo.All<Team>(x => x.Id.Equals(teamModel.Id))
+               .FirstOrDefaultAsync();
+
+            if (team == null)
             {
-                throw;
+                throw new ArgumentException(ExceptionConstants.Message.BadArguments); 
             }
+
+            team.Name = teamModel.Name ?? string.Empty;
+            team.TeamPoints = teamModel.TeamPoints;
+            result = repo.Update(team);
+            await repo.SavechangesAsync();
+            return result;
+
         }
-
-       
     }
 }

@@ -3,6 +3,7 @@ using FootballLeague.Core.Constants;
 using FootballLeague.Core.Contracts;
 using FootballLeague.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +20,10 @@ namespace FootballLeague.Controllers
 
         public TeamController(ITeamService _teamService, IMatchService _matchService)
         {
-            this.teamService = _teamService;
-            this.matchService = _matchService;
+           teamService = _teamService;
+           matchService = _matchService;
         }
+
         /// <summary>
         /// Return list of all team records
         /// </summary>
@@ -35,34 +37,35 @@ namespace FootballLeague.Controllers
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 return NotFound(ex.Message);
             }
         }
+
         /// <summary>
         /// Get a team by given Id
         /// </summary>
         /// <param name="Id">Identificator of the team</param>
         /// <returns></returns>
-        [HttpGet("{Id}")]
-        public async  Task<ActionResult> GetTeamById(Guid Id)
+        [HttpGet("{id}")]
+        public async  Task<ActionResult> GetTeamById(Guid id)
         {
             try
             {
-                var result = await teamService.GetTeamByIdAsync(Id);
-                
+                var result = await teamService.GetTeamByIdAsync(id);
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return NotFound(ex.Message);
             }
         }
+
         /// <summary>
         /// Add a new record 
         /// </summary>
-        /// <param name="team">model of the entity</param>
+        /// <param name="team">Model of the entity</param>
         /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Post(TeamModel team)
@@ -75,60 +78,76 @@ namespace FootballLeague.Controllers
                 {
                     return Ok(result);
                 }
-                return NotFound(result.Message);
+
+                return BadRequest(result.Message);
+            }
+            catch (ArgumentException argEx)
+            {
+                return NotFound(argEx.Message);
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
+
         /// <summary>
         /// Update an existing record
         /// </summary>
         /// <param name="Id">Identificator of a team</param>
-        /// <param name="team">model of the entity</param>
+        /// <param name="team">Model of a team</param>
         /// <returns></returns>
-        [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, TeamModel team)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(Guid id, TeamModel team)
         {
             try
             {
-                if (Id != team.Id)
+                if (!id.Equals(team.Id))
                 {
-                    return BadRequest();
+                    return BadRequest("Ids are diffrent");
                 }
                 var result = await teamService.UdpateTeamAsync(team);
                 if (result.IsSuccess)
                 {
                     return Ok(result);
                 }
-                return NotFound(result.Message);
+
+                return BadRequest(result.Message);
+            }
+            catch (ArgumentException argEx)
+            {
+                return NotFound(argEx.Message);
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
+
         /// <summary>
         /// Removes a record
         /// </summary>
         /// <param name="Id">Identificator of a team</param>
         /// <returns></returns>
-        [HttpDelete("{Id}")]
-        public async Task<ActionResult> Delete(Guid Id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
-                var result = await teamService.RemoveTeamAsync(Id);
+                var result = await teamService.RemoveTeamAsync(id);
                 if (result.IsSuccess)
                 {
                     return Ok(result);
                 }
-                return NotFound(result.Message);
+                return BadRequest(result.Message);
+            }
+            catch (ArgumentException argEx)
+            {
+                return NotFound(argEx.Message);
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }

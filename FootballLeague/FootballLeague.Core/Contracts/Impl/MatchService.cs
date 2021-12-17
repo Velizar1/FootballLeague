@@ -19,49 +19,47 @@ namespace FootballLeague.Core.Contracts.Impl
         private readonly IScoreService scoreService;
         public MatchService(IRepository _repo, IScoreService _scoreService)
         {
-            this.repo = _repo;
-            this.scoreService = _scoreService;
+            repo = _repo;
+            scoreService = _scoreService;
         }
+
         public async Task<RepositoryResult> AddMatchAsync(MatchModel matchModel)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
-            try
+
+            var match = await repo.AllReadOnly<Match>()
+                .Where(x => x.HostingTeamId.Equals(matchModel.HostingTeamId) &&
+                          x.VisitingTeamId.Equals(matchModel.VisitingTeamId))
+                .FirstOrDefaultAsync();
+
+            if (match != null)
             {
-                var match = await repo.AllReadOnly<Match>()
-                    .Where(x => x.HostingTeamId.Equals(matchModel.HostingTeamId) &&
-                              x.VisitingTeamId.Equals(matchModel.VisitingTeamId))
-                    .FirstOrDefaultAsync();
-                if (match != null)
-                {
-                    result.Message = ResultConstants.Exist;
-                    return result;
-                }
-                result = await repo.CreateAsync<Match>(new Match()
-                {
-                    HostingTeamId = matchModel.HostingTeamId,
-                    VisitingTeamId = matchModel.VisitingTeamId,
-                    HostingTeamScore = matchModel.HostingTeamScore,
-                    VisitingTeamScore = matchModel.VisitingTeamScore,
-                   
-                }) ;
-
-                await repo.SavechangesAsync();
-
-                await scoreService.CalculateScore(null, matchModel.VisitingTeamId, matchModel.HostingTeamId);
-
-                result.IsSuccess = ResultConstants.Success;
-                result.Message = ResultConstants.CreateSucceeded;
+                result.Message = ResultConstants.Exist;
                 return result;
             }
-            catch (Exception)
+
+            result = await repo.CreateAsync<Match>(new Match()
             {
-                throw;
-            }
+                HostingTeamId = matchModel.HostingTeamId,
+                VisitingTeamId = matchModel.VisitingTeamId,
+                HostingTeamScore = matchModel.HostingTeamScore,
+                VisitingTeamScore = matchModel.VisitingTeamScore,
+
+            });
+
+            await repo.SavechangesAsync();
+
+            await scoreService.CalculatePoints(null, matchModel.VisitingTeamId, matchModel.HostingTeamId);
+
+            result.IsSuccess = ResultConstants.Success;
+            result.Message = ResultConstants.CreateSucceeded;
+            return result;
+
         }
 
         public IEnumerable<MatchModel> AllMatches()
         {
-            return repo.AllReadOnly<Match>()
+            var matches = repo.AllReadOnly<Match>()
                 .Select(x => new MatchModel
                 {
                     Id = x.Id,
@@ -69,15 +67,19 @@ namespace FootballLeague.Core.Contracts.Impl
                     VisitingTeamId = x.VisitingTeamId,
                     HostingTeamScore = x.HostingTeamScore,
                     VisitingTeamScore = x.VisitingTeamScore,
-                   
-
                 })
                 .ToList();
+
+            if (matches.Count == 0)
+            {
+                throw new InvalidOperationException(ExceptionConstants.Message.EmptySequence);
+            }
+            return matches;
         }
 
         public async Task<MatchModel> GetMatchByIdAsync(Guid id)
         {
-            var data= await repo.AllReadOnly<Match>(x => x.Id.Equals(id))
+            var match = await repo.AllReadOnly<Match>(x => x.Id.Equals(id))
                  .Select(x => new MatchModel()
                  {
                      Id = x.Id,
@@ -85,71 +87,62 @@ namespace FootballLeague.Core.Contracts.Impl
                      VisitingTeamId = x.VisitingTeamId,
                      VisitingTeamScore = x.VisitingTeamScore,
                      HostingTeamScore = x.HostingTeamScore,
-                   
+
                  })
                  .FirstOrDefaultAsync();
-            if (data == null)
+
+            if (match == null)
             {
-                throw new Exception(ResultConstants.NotFound);
+                throw new ArgumentException(ExceptionConstants.Message.NotFoundById);
             }
-            return data;
+            return match;
         }
 
         public async Task<RepositoryResult> RemoveMatchAsync(Guid id)
         {
             var result = new RepositoryResult(false, ResultConstants.DeleteFailed);
-            try
-            {
-                var data = await repo.All<Match>(x => x.Id.Equals(id))
-                    .Include(x=>x.VisitingTeam)
-                    .Include(x=>x.HostingTeam)
-                   .FirstOrDefaultAsync();
-               
-                if (data != null)
-                {
-                    await scoreService.CalculateScore(data, data.HostingTeamId, data.VisitingTeamId, true);
-                    result = repo.Delete<Match>(data);
-                    await repo.SavechangesAsync();
 
-                }
+            var match = await repo.All<Match>(x => x.Id.Equals(id))
+                .Include(x => x.VisitingTeam)
+                .Include(x => x.HostingTeam)
+               .FirstOrDefaultAsync();
 
-                return result;
-            }
-            catch (Exception)
+            if (match == null)
             {
-                throw;
+                throw new ArgumentException(ExceptionConstants.Message.NotFoundById);
             }
+
+            await scoreService.CalculatePoints(match, match.HostingTeamId, match.VisitingTeamId, true);
+            result = repo.Delete(match);
+            await repo.SavechangesAsync();
+            return result;
+
         }
 
         public async Task<RepositoryResult> UdpateMatchAsync(MatchModel matchModel)
         {
             var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
-            try
+
+            var match = await repo.All<Match>(x => x.Id.Equals(matchModel.Id))
+                .Include(x => x.VisitingTeam)
+                .Include(x => x.HostingTeam)
+                .FirstOrDefaultAsync();
+
+            if (match == null)
             {
-                var match = await repo.All<Match>(x => x.Id.Equals(matchModel.Id))
-                    .Include(x => x.VisitingTeam)
-                    .Include(x => x.HostingTeam)
-                   .FirstOrDefaultAsync();
-                if (match != null)
-                {
-                    await scoreService.CalculateScore(match, matchModel.VisitingTeamId, matchModel.HostingTeamId, true);
-                    match.VisitingTeamId = matchModel.VisitingTeamId;
-                    match.VisitingTeamScore = matchModel.VisitingTeamScore;
-                    match.HostingTeamId = matchModel.HostingTeamId;
-                    match.HostingTeamScore = matchModel.HostingTeamScore;
-                    result = repo.Update<Match>(match);
-                    await repo.SavechangesAsync();
-                    await scoreService.CalculateScore(match, matchModel.VisitingTeamId, matchModel.HostingTeamId);
-                }
-                return result;
+                throw new ArgumentException(ExceptionConstants.Message.BadArguments);
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            await scoreService.CalculatePoints(match, match.VisitingTeamId, match.HostingTeamId, true);
+            match.VisitingTeamId = matchModel.VisitingTeamId;
+            match.VisitingTeamScore = matchModel.VisitingTeamScore;
+            match.HostingTeamId = matchModel.HostingTeamId;
+            match.HostingTeamScore = matchModel.HostingTeamScore;
+            result = repo.Update(match);
+            await repo.SavechangesAsync();
+            await scoreService.CalculatePoints(match, matchModel.VisitingTeamId, matchModel.HostingTeamId);
+            return result;
+
         }
-
-       
-
     }
 }

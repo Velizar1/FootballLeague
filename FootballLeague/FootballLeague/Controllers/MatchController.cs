@@ -1,7 +1,9 @@
-﻿using FootballLeague.Core.Constants;
+﻿using FootballLeague.Core.Commons;
+using FootballLeague.Core.Constants;
 using FootballLeague.Core.Contracts;
 using FootballLeague.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,122 +17,137 @@ namespace FootballLeague.Controllers
     [ApiController]
     public class MatchController : ControllerBase
     {
-       
+
         private readonly IMatchService matchService;
 
         public MatchController(IMatchService _matchService)
         {
-            
-            this.matchService = _matchService;
+            matchService = _matchService;
         }
+
         /// <summary>
         /// Return list of all match records
         /// </summary>
-        /// <returns>List<MatchModelEdit<T>></returns>
+        /// <returns></returns>
         [HttpGet()]
         public ActionResult GetAll()
         {
+
             try
             {
                 var result = matchService.AllMatches();
-
                 return Ok(result);
             }
-            catch (Exception)
+            catch (InvalidOperationException ex)
             {
-                return NotFound(ResultConstants.NotFound);
+                return NotFound(ex.Message);
             }
         }
+
         /// <summary>
-        /// Get a match by given Id
+        /// Get a match by an Id
         /// </summary>
         /// <param name="Id">Identificator of the match</param>
-        /// <returns>MatchModel<Guid></returns>
-        [HttpGet("{Id}")]
-        public async Task<ActionResult> GetMatchById(Guid Id)
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetMatchById(Guid id)
         {
             try
             {
-                var result = await matchService.GetMatchByIdAsync(Id);
-
+                var result = await matchService.GetMatchByIdAsync(id);
                 return Ok(result);
             }
-            catch (Exception)
+            catch (ArgumentException ex)
             {
-                return NotFound(ResultConstants.NotFound);
+                return NotFound(ex.Message);
             }
         }
+
         /// <summary>
         /// Add a new record 
         /// </summary>
-        /// <param name="match">model of the entity</param>
+        /// <param name="match">Model of a match</param>
         /// <returns>RepositoryResult</returns>
         [HttpPost]
         public async Task<ActionResult> Post(MatchModel match)
         {
-            
+
             try
             {
                 var result = await matchService.AddMatchAsync(match);
                 if (result.IsSuccess)
                 {
-                    return Ok(result);
+                    return Ok( result);
                 }
-                return NotFound(result.Message);
+                return BadRequest(result.Message);
             }
-            catch (Exception)
+           
+            catch (ArgumentException argEx)
             {
-                return NotFound(ResultConstants.NotFound);
+                return NotFound(argEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500,ex.Message);
             }
         }
+
         /// <summary>
         /// Update an existing record
         /// </summary>
-        /// <param name="Id">identificator of a match</param>
-        /// <param name="match">model of the entity</param>
+        /// <param name="Id">Identificator of a match</param>
+        /// <param name="match">Model of a match</param>
         /// <returns></returns>
-        [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, MatchModel match)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(Guid id, MatchModel match)
         {
             try
             {
-
-                if (Id != match.Id)
+                if (!id.Equals(match.Id))
                 {
-                    return BadRequest();
+                    return BadRequest("Ids are diffrent");
                 }
                 var result = await matchService.UdpateMatchAsync(match);
                 if (result.IsSuccess)
                 {
                     return Ok(result);
                 }
-                return NotFound(result.Message);
+                return BadRequest(result.Message);
             }
-            catch (Exception)
+            catch (ArgumentException argEx)
             {
-                return NotFound(ResultConstants.NotFound);
+                return NotFound(argEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
+
         /// <summary>
         /// Removes a record
         /// </summary>
         /// <param name="Id">Identificator of a match</param>
         /// <returns></returns>
-        [HttpDelete("{Id}")]
-        public async Task<ActionResult> Delete(Guid Id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
-                var result = await matchService.RemoveMatchAsync(Id);
+                var result = await matchService.RemoveMatchAsync(id);
                 if (result.IsSuccess)
                 {
                     return Ok(result);
                 }
-                return NotFound(result.Message);
+                return BadRequest(result.Message);
             }
-            catch (Exception)
+            catch (ArgumentException argEx)
             {
-                return NotFound(ResultConstants.NotFound);
+                return NotFound(argEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

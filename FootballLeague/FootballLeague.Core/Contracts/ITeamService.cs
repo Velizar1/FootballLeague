@@ -12,40 +12,39 @@ namespace FootballLeague.Core.Contracts
     public interface ITeamService
     {
         /// <summary>
-        /// 
+        /// Get a team by id
         /// </summary>
-        /// <typeparam name="Guid"></typeparam>
-        /// <param name="Id"></param>
+        /// <param name="Id">Identificator of a team</param>
         /// <returns></returns>
         public Task<TeamModel> GetTeamByIdAsync(Guid Id);
+
         /// <summary>
-        /// 
+        /// Add a team record
         /// </summary>
-        /// <typeparam name="Guid"></typeparam>
-        /// <param name="matchModel"></param>
+        /// <param name="matchModel">Model of a team</param>
         /// <returns></returns>
         public Task<RepositoryResult> AddTeamAsync(TeamModel matchModel);
+
         /// <summary>
-        /// 
+        /// Remove a team record
         /// </summary>
-        /// <typeparam name="Guid"></typeparam>
-        /// <param name="id"></param>
+        /// <param name="id">Indentificator of a team</param>
         /// <returns></returns>
         public Task<RepositoryResult> RemoveTeamAsync(Guid id);
+
         /// <summary>
-        /// 
+        /// Update a team
         /// </summary>
-        /// <typeparam name="Guid"></typeparam>
-        /// <param name="matchModel"></param>
+        /// <param name="matchModel">Model of a team</param>
         /// <returns></returns>
         public Task<RepositoryResult> UdpateTeamAsync(TeamModel matchModel);
+
         /// <summary>
-        /// 
+        /// Get all teams
         /// </summary>
-        /// <typeparam name="Guid"></typeparam>
         /// <returns></returns>
         public IEnumerable<TeamModel> AllTeams();
 
-       
+
     }
 }

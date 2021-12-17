@@ -17,7 +17,7 @@ namespace FootballLeague.Core.Repositories.Impl
 
         public Repository(ApplicationDbContext _context)
         {
-            this.context = _context;
+            context = _context;
         }
 
         public IQueryable<T> All<T>() where T : class
@@ -44,25 +44,33 @@ namespace FootballLeague.Core.Repositories.Impl
         {
             try
             {
-                context.Set<T>().Add(data);
+                var entity = context.Set<T>().Add(data);
+                if (entity == null)
+                {
+                    new RepositoryResult(ResultConstants.Success, ResultConstants.CreateFailed);
+                }
                 return new RepositoryResult(ResultConstants.Success, ResultConstants.CreateSucceeded);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception(ResultConstants.CreateFailed);
+                throw new Exception(ResultConstants.CreateFailed + typeof(T).ToString(), ex);
             }
         }
         public async Task<RepositoryResult> CreateAsync<T>(T data) where T : class
         {
             try
             {
-                await context.Set<T>().AddAsync(data); 
-                return new RepositoryResult(ResultConstants.Success,ResultConstants.CreateSucceeded);
+                var entity = await context.Set<T>().AddAsync(data);
+                if (entity == null)
+                {
+                    new RepositoryResult(ResultConstants.Success, ResultConstants.CreateFailed);
+                }
+
+                return new RepositoryResult(ResultConstants.Success, ResultConstants.CreateSucceeded);
             }
-            catch(Exception)
+            catch (Exception ex)
             {
-               
-                throw new Exception(ResultConstants.CreateFailed);
+                throw new Exception(ResultConstants.CreateFailed + typeof(T).ToString(), ex);
             }
         }
 
@@ -70,12 +78,17 @@ namespace FootballLeague.Core.Repositories.Impl
         {
             try
             {
-                context.Set<T>().Remove(data);
+                var entity = context.Set<T>().Remove(data);
+                if (entity == null)
+                {
+                    new RepositoryResult(ResultConstants.Success, ResultConstants.CreateFailed);
+                }
+
                 return new RepositoryResult(ResultConstants.Success, ResultConstants.DeleteSucceeded);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception(ResultConstants.DeleteFailed);
+                throw new Exception(ResultConstants.DeleteFailed + typeof(T).ToString(), ex);
             }
         }
 
@@ -83,12 +96,17 @@ namespace FootballLeague.Core.Repositories.Impl
         {
             try
             {
-                context.Set<T>().Update(data);
+                var entity = context.Set<T>().Update(data);
+                if (entity == null)
+                {
+                    new RepositoryResult(ResultConstants.Success, ResultConstants.CreateFailed);
+                }
+
                 return new RepositoryResult(ResultConstants.Success, ResultConstants.UpdateSucceeded);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception(ResultConstants.UpdateFailed);
+                throw new Exception(ResultConstants.UpdateFailed + typeof(T).ToString(), ex);
             }
         }
         public int Savechanges()
@@ -97,10 +115,11 @@ namespace FootballLeague.Core.Repositories.Impl
             {
                 return context.SaveChanges();
             }
-            catch (Exception)
+            catch (DbUpdateException dbEx)
             {
-                throw new Exception(ResultConstants.SaveFailed);
+                throw new DbUpdateException(ResultConstants.SaveFailed,dbEx);
             }
+            
         }
 
         public async Task<int> SavechangesAsync()
@@ -109,9 +128,9 @@ namespace FootballLeague.Core.Repositories.Impl
             {
                 return await context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (DbUpdateException dbEx)
             {
-                throw new Exception(ResultConstants.SaveFailed);
+                throw new DbUpdateException(ResultConstants.SaveFailed,dbEx);
             }
         }
 

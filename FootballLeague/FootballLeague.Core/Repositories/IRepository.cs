@@ -18,7 +18,6 @@ namespace FootballLeague.Core.Repositories
         Task<int> SavechangesAsync();
         IQueryable<T> All<T>() where T: class;
         IQueryable<T> AllReadOnly<T>() where T : class;
-
         IQueryable<T> All<T>(Expression<Func<T, bool>> expression) where T : class;
         IQueryable<T> AllReadOnly<T>(Expression<Func<T, bool>> expression) where T : class;
         

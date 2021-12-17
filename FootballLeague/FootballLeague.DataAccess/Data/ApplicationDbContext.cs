@@ -25,8 +25,7 @@ namespace FootballLeague.DataAccess.Data
             modelBuilder.Entity<Match>()
                 .HasOne(x => x.VisitingTeam)
                 .WithMany(x => x.VisitedMatches)
-                .OnDelete(DeleteBehavior.NoAction);
-             
+                .OnDelete(DeleteBehavior.NoAction); 
         }
         public DbSet<Match> Matches { get; set; }
         public DbSet<Team> Teams { get; set; }

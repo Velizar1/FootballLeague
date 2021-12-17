@@ -1,4 +1,5 @@
-﻿using FootballLeague.Core.Models;
+﻿using FootballLeague.Core.Constants;
+using FootballLeague.Core.Models;
 using FootballLeague.Core.Repositories;
 using FootballLeague.DataAccess.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,10 @@ namespace FootballLeague.Core.Contracts.Impl
 
         public ScoreService(IRepository _repo)
         {
-            this.repo = _repo;
+            repo = _repo;
         }
-        public async Task CalculateScore(Match match, Guid VisitingTeamId, Guid HostingTeamId, bool revertScore = false)
+
+        public async Task CalculatePoints(Match match, Guid VisitingTeamId, Guid HostingTeamId, bool revertScore = false)
         {
             if (match == null)
             {
@@ -33,36 +35,35 @@ namespace FootballLeague.Core.Contracts.Impl
 
             if (match != null)
             {
-               Team teamModel;
-                try
-                {
-                    if (match.HostingTeamScore > match.VisitingTeamScore)
-                    {
-                        teamModel = match.HostingTeam;
-                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -3 : 3);
-                    }
-                    else if (match.HostingTeamScore < match.VisitingTeamScore)
-                    {
-                        teamModel = match.VisitingTeam;
-                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -3 : 3);
-                    }
-                    else
-                    {
-                        teamModel = match.VisitingTeam;
-                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -1 : 1);
-                        repo.Update<Team>(teamModel);
-                        
-                        teamModel = match.HostingTeam;
-                        teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -1 : 1);
+                Team teamModel;
 
-                    }
-                    repo.Update<Team>(teamModel);
-                    await repo.SavechangesAsync();
-                }
-                catch (Exception)
+                if (match.HostingTeamScore > match.VisitingTeamScore)
                 {
-                    throw;
+                    teamModel = match.HostingTeam;
+                    teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -3 : 3);
                 }
+                else if (match.HostingTeamScore < match.VisitingTeamScore)
+                {
+                    teamModel = match.VisitingTeam;
+                    teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -3 : 3);
+                }
+                else
+                {
+                    teamModel = match.VisitingTeam;
+                    teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -1 : 1);
+                    repo.Update(teamModel);
+
+                    teamModel = match.HostingTeam;
+                    teamModel.TeamPoints = teamModel.TeamPoints + (revertScore ? -1 : 1);
+
+                }
+
+                repo.Update(teamModel);
+                await repo.SavechangesAsync();
+            }
+            else
+            {
+                throw new ArgumentException(ExceptionConstants.Message.NotFound);
             }
         }
     }
