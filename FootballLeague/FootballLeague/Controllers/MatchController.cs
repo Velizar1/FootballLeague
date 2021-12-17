@@ -45,7 +45,7 @@ namespace FootballLeague.Controllers
         /// Get a match by given Id
         /// </summary>
         /// <param name="Id">Identificator of the match</param>
-        /// <returns>MatchEditModel<Guid></returns>
+        /// <returns>MatchModel<Guid></returns>
         [HttpGet("{Id}")]
         public async Task<ActionResult> GetMatchById(Guid Id)
         {
@@ -66,7 +66,7 @@ namespace FootballLeague.Controllers
         /// <param name="match">model of the entity</param>
         /// <returns>RepositoryResult</returns>
         [HttpPost]
-        public async Task<ActionResult> Post(MatchAddModel match)
+        public async Task<ActionResult> Post(MatchModel match)
         {
             
             try
@@ -90,7 +90,7 @@ namespace FootballLeague.Controllers
         /// <param name="match">model of the entity</param>
         /// <returns></returns>
         [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, MatchEditModel match)
+        public async Task<ActionResult> Put(Guid Id, MatchModel match)
         {
             try
             {

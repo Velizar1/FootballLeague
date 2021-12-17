@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace FootballLeague.Core.Models
 {
-    public class MatchAddModel
+    public class MatchModel
     {
-       
+        public Guid Id { get; set; }
         public Guid HostingTeamId { get; set; }
         public Guid VisitingTeamId { get; set; }
         public int HostingTeamScore { get; set; }
         public int VisitingTeamScore { get; set; }
-        public bool IsPlayed { get; set; }
+       
     }
 }

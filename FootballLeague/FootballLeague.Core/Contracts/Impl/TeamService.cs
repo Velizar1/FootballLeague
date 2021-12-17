@@ -25,7 +25,7 @@ namespace FootballLeague.Core.Contracts.Impl
         }
 
 
-        public async Task<RepositoryResult> AddTeamAsync(TeamAddModel teamModel)
+        public async Task<RepositoryResult> AddTeamAsync(TeamModel teamModel)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
@@ -42,7 +42,7 @@ namespace FootballLeague.Core.Contracts.Impl
                 {
 
                     Name = teamModel.Name ?? string.Empty,
-                    TeamScore = teamModel.TeamScore,
+                    TeamScore = teamModel.TeamPoints,
                 });
 
                 await repo.SavechangesAsync();
@@ -59,7 +59,7 @@ namespace FootballLeague.Core.Contracts.Impl
             }
         }
       
-        public List<TeamModel> AllTeams()
+        public IEnumerable<TeamModel> AllTeams()
         {
             return repo.AllReadOnly<Team>()
                 .Include(x => x.VisitedMatches)
@@ -68,8 +68,8 @@ namespace FootballLeague.Core.Contracts.Impl
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    TeamScore = x.TeamScore,
-                    HostedMatches = x.HostedMatches.Select(y => new MatchEditModel()
+                    TeamPoints = x.TeamScore,
+                    HostedMatches = x.HostedMatches.Select(y => new MatchModel()
                     {
                         Id = y.Id,
                         HostingTeamId = y.HostingTeamId,
@@ -79,7 +79,7 @@ namespace FootballLeague.Core.Contracts.Impl
                        
 
                     }).ToList(),
-                    VisitedMatches = x.VisitedMatches.Select(y => new MatchEditModel()
+                    VisitedMatches = x.VisitedMatches.Select(y => new MatchModel()
                     {
                         Id = y.Id,
                         HostingTeamId = y.HostingTeamId,
@@ -104,8 +104,8 @@ namespace FootballLeague.Core.Contracts.Impl
                {
                    Id = x.Id,
                    Name = x.Name,
-                   TeamScore = x.TeamScore,
-                   HostedMatches = x.HostedMatches.Select(y => new MatchEditModel()
+                   TeamPoints = x.TeamScore,
+                   HostedMatches = x.HostedMatches.Select(y => new MatchModel()
                    {
                        Id = y.Id,
                        HostingTeamId = y.HostingTeamId,
@@ -115,7 +115,7 @@ namespace FootballLeague.Core.Contracts.Impl
                       
 
                    }).ToList(),
-                   VisitedMatches = x.VisitedMatches.Select(y => new MatchEditModel()
+                   VisitedMatches = x.VisitedMatches.Select(y => new MatchModel()
                    {
                        Id = y.Id,
                        HostingTeamId = y.HostingTeamId,
@@ -168,7 +168,7 @@ namespace FootballLeague.Core.Contracts.Impl
             }
         }
 
-        public async Task<RepositoryResult> UdpateTeamAsync(TeamEditModel teamModel)
+        public async Task<RepositoryResult> UdpateTeamAsync(TeamModel teamModel)
         {
             var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
             try
@@ -178,7 +178,7 @@ namespace FootballLeague.Core.Contracts.Impl
                 if (team != null)
                 {
                     team.Name = teamModel.Name ?? String.Empty;
-                    team.TeamScore = teamModel.TeamScore;
+                    team.TeamScore = teamModel.TeamPoints;
 
                     result = repo.Update<Team>(team);
                     await repo.SavechangesAsync();

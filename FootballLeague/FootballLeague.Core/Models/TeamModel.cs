@@ -12,8 +12,8 @@ namespace FootballLeague.Core.Models
 
         public string Name { get; set; }
 
-        public int TeamScore { get; set; }
-        public List<MatchEditModel> HostedMatches { get; set; } 
-        public List<MatchEditModel> VisitedMatches { get; set; } 
+        public int TeamPoints { get; set; }
+        public IEnumerable<MatchModel> HostedMatches { get; set; } 
+        public IEnumerable<MatchModel> VisitedMatches { get; set; } 
     }
 }

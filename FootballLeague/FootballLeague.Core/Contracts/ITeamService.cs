@@ -24,7 +24,7 @@ namespace FootballLeague.Core.Contracts
         /// <typeparam name="Guid"></typeparam>
         /// <param name="matchModel"></param>
         /// <returns></returns>
-        public Task<RepositoryResult> AddTeamAsync(TeamAddModel matchModel);
+        public Task<RepositoryResult> AddTeamAsync(TeamModel matchModel);
         /// <summary>
         /// 
         /// </summary>
@@ -38,13 +38,13 @@ namespace FootballLeague.Core.Contracts
         /// <typeparam name="Guid"></typeparam>
         /// <param name="matchModel"></param>
         /// <returns></returns>
-        public Task<RepositoryResult> UdpateTeamAsync(TeamEditModel matchModel);
+        public Task<RepositoryResult> UdpateTeamAsync(TeamModel matchModel);
         /// <summary>
         /// 
         /// </summary>
         /// <typeparam name="Guid"></typeparam>
         /// <returns></returns>
-        public List<TeamModel> AllTeams();
+        public IEnumerable<TeamModel> AllTeams();
 
        
     }

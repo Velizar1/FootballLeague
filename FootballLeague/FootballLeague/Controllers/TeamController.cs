@@ -65,7 +65,7 @@ namespace FootballLeague.Controllers
         /// <param name="team">model of the entity</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Post(TeamAddModel team)
+        public async Task<ActionResult> Post(TeamModel team)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
@@ -89,7 +89,7 @@ namespace FootballLeague.Controllers
         /// <param name="team">model of the entity</param>
         /// <returns></returns>
         [HttpPut("{Id}")]
-        public async Task<ActionResult> Put(Guid Id, TeamEditModel team)
+        public async Task<ActionResult> Put(Guid Id, TeamModel team)
         {
             try
             {

@@ -22,7 +22,7 @@ namespace FootballLeague.Core.Contracts.Impl
             this.repo = _repo;
             this.scoreService = _scoreService;
         }
-        public async Task<RepositoryResult> AddMatchAsync(MatchAddModel matchModel)
+        public async Task<RepositoryResult> AddMatchAsync(MatchModel matchModel)
         {
             var result = new RepositoryResult(false, ResultConstants.CreateFailed);
             try
@@ -59,10 +59,10 @@ namespace FootballLeague.Core.Contracts.Impl
             }
         }
 
-        public List<MatchEditModel> AllMatches()
+        public IEnumerable<MatchModel> AllMatches()
         {
             return repo.AllReadOnly<Match>()
-                .Select(x => new MatchEditModel
+                .Select(x => new MatchModel
                 {
                     Id = x.Id,
                     HostingTeamId = x.HostingTeamId,
@@ -75,10 +75,10 @@ namespace FootballLeague.Core.Contracts.Impl
                 .ToList();
         }
 
-        public async Task<MatchEditModel> GetMatchByIdAsync(Guid id)
+        public async Task<MatchModel> GetMatchByIdAsync(Guid id)
         {
             var data= await repo.AllReadOnly<Match>(x => x.Id.Equals(id))
-                 .Select(x => new MatchEditModel()
+                 .Select(x => new MatchModel()
                  {
                      Id = x.Id,
                      HostingTeamId = x.HostingTeamId,
@@ -121,7 +121,7 @@ namespace FootballLeague.Core.Contracts.Impl
             }
         }
 
-        public async Task<RepositoryResult> UdpateMatchAsync(MatchEditModel matchModel)
+        public async Task<RepositoryResult> UdpateMatchAsync(MatchModel matchModel)
         {
             var result = new RepositoryResult(false, ResultConstants.UpdateFailed);
             try
